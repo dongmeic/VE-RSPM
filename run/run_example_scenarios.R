@@ -3,7 +3,7 @@
 # By: Dongmei Chen (dchen@lcog.org)
 # September 21st, 2020 
 
-drive = 'E'
+drive = 'C'
 
 if(drive == 'C'){
   drive.path = 'C:/Users/DChen/all/VE-RSPM'
