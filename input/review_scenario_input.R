@@ -1,4 +1,4 @@
-# Objective: Review the example scenario input folders to create CLMPO scenario data; 
+# Objective: Review the example scenario input folders to create CLMPO scenario data
 # run the VERSPM_Scenarios model
 # By: Dongmei Chen (dchen@lcog.org)
 # September 23rd, 2020 

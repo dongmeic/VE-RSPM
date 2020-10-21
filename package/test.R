@@ -10,7 +10,6 @@ if(drive == 'C'){
   drive.path = 'E:'
 }
 
-
 path <- paste0(drive.path, "/VisionEval/models/CLMPO-scenarios/01-Base-Year-2010/Datastore/2010/Bzone/")
 load(paste0(path, "Pop.Rda"))
 Pop <- Dataset
