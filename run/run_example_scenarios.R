@@ -36,13 +36,16 @@ copy.files <- function(path, s, i){
 
 # strategy names and levels
 strategies <- unique(infile$strategy_name)
-all.levels <- list(C=c(1, 2, 3), M=c(1, 2), P=c(1, 2, 3), V=c(0, 1, 2),
-                   F=c(0, 1, 2), I=c(0, 1, 2))
+all.levels <- list(C=c(0, 1, 2, 3), M=c(1, 2, 3), P=c(1, 2, 3), V=c(0, 1, 2, 3),
+                   F=c(1, 2, 3), I=c(1, 2, 3))
 
 # apply a cartesian product on the levels to get all combinations
 comb <- expand.grid(all.levels)
 
-get.scenario.name <- function(C=1, M=1, P=1, V=0, F=0, I=0, df=infile, 
+# check the function with below set-up
+# C=0; M=1; P=1; V=0; F=1; I=1; df=infile
+# categories <- c("B", "C", "D", "E", "F", "G","I","P","T","V")
+get.scenario.name <- function(C=0, M=1, P=1, V=0, F=1, I=1, df=infile, 
                               out=c('dataframe', 'scenario')){
   df.s = rbind(df[df$strategy_name == 'C' & df$strategy_level == C,],
         df[df$strategy_name == 'M' & df$strategy_level == M,],
@@ -51,7 +54,16 @@ get.scenario.name <- function(C=1, M=1, P=1, V=0, F=0, I=0, df=infile,
         df[df$strategy_name == 'F' & df$strategy_level == F,],
         df[df$strategy_name == 'I' & df$strategy_level == I,])
   df.s <- df.s[order(df.s$category_name),]
-  df.ss <- data.frame(t(unique(df.s[,c('category_name', 'policy_name')])))
+  df.s <- unique(df.s[,c('category_name', 'policy_name')])
+  if(length(df.s$category_name) > length(unique(df.s$category_name))){
+    cat.df <- data.frame(table(df.s$category_name))
+    cats <- as.character(cat.df[cat.df$Freq > 1,]$Var1)
+    for(cat in cats){
+      policyname <- min(df.s[df.s$category_name==cat,]$policy_name)
+      df.s <- df.s[-which(df.s$category_name==cat & df.s$policy_name != policyname),]
+    }
+  }
+  df.ss <- data.frame(t(df.s))
   colnames(df.ss) <- as.character(df.ss[1,])
   df.ss <- df.ss[-1,]
   df.ss.copy <- df.ss
@@ -81,15 +93,17 @@ for(i in 1:dim(comb)[1]){
 comb$S <- scen.list$S
 
 dim(scen.list)
+write.csv(scen.list, paste0(infolder, "scenario_list_with_categories.csv"), row.names = FALSE)
 write.csv(comb, paste0(infolder, "scenario_list.csv"), row.names = FALSE)
 
 # start from a few folders
-#tests <- comb$S[1:5]
-#tests <- sample(comb$S, 100)
-#random.scen <- comb[sample(1:nrow(comb), 100),]
-#subset.scen <- scen.list[1:5,]
-#write.csv(subset.scen, paste0(infolder, "selected_scenario_list.csv"), row.names = FALSE)
-#copy.files(path, tests[1], 2)
+tests <- comb$S[1:5]
+# tests <- sample(comb$S, 100)
+# random.scen <- comb[sample(1:nrow(comb), 100),]
+# subset.scen <- scen.list[1:5,]
+# write.csv(subset.scen, paste0(infolder, "selected_scenario_list.csv"), row.names = FALSE)
+path <- paste0(drive.path, '/VisionEval/models/')
+copy.files(path, tests[1], 2)
 
 read.infile <- function(){
   infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
@@ -97,7 +111,9 @@ read.infile <- function(){
   return(infile)
 }
 
-modify.single.input <- function(scenario = 'B1C1D1E1F1G1I1L1P1T1V1',
+# check the function with below set-up
+# scenario = 'B0C1D1E1F0G1I1P0T1V1'; stra = 'I'; cat = 'I'; csv = 'azone_per_cap_inc.csv'; var = 'HHIncomePC.2010'; cty = 'Eugene'; lvl = 1
+modify.single.input <- function(scenario = 'B0C1D1E1F0G1I1P0T1V1',
                                 stra = 'I',
                                 cat = 'I',
                                 csv = 'azone_per_cap_inc.csv', 
@@ -105,6 +121,7 @@ modify.single.input <- function(scenario = 'B1C1D1E1F1G1I1L1P1T1V1',
                                 cty = 'Eugene',
                                 lvl = 1){
   infile <- read.infile()
+  path <- paste0(drive.path, '/VisionEval/models/')
   path <- paste0(path, 'CLMPO-scenarios/')
   cat(paste('Modifying', csv, '...\n'))
   cat(paste0('The strategy is ', unique(infile[infile$strategy_name == stra,]$strategy_label),
@@ -152,7 +169,7 @@ modify.single.input <- function(scenario = 'B1C1D1E1F1G1I1L1P1T1V1',
   write.csv(input.csv, paste0(path, foldernm, "/inputs/", csv), row.names = FALSE)
 }
 
-modify.scenario.input <- function(scenario = 'B1C1D1E1F1G1I1L1P1T1V1', df=scen.list){
+modify.scenario.input <- function(scenario = 'B0C1D1E1F0G1I1P0T1V1', df=scen.list){
   cat(paste0('Modifying inputs for the scenario ', scenario, '...\n'))
   infile <- read.infile()
   # category to check
@@ -244,6 +261,10 @@ Sys.time() - start.time
 # 22.17732 mins
 cat(paste('It took that much time to create', length(scenarios), 'folders...\n'))
 
+# in case the process has been interruped 
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+comb <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
+
 # step 2: run the model
 rspm <- openModel(paste0(path, 'CLMPO-scenarios'))
 start.time <- Sys.time()
@@ -256,7 +277,7 @@ Sys.time() - start.time
 
 # step 3: get the output measures
 setwd(paste0(path, 'CLMPO-scenarios'))
-for(runnm in c(10, 100, 1000)){
+for(runnm in c(10, 100, 1000,10000)){
   source(paste0(path,"CLMPO-scenarios/CLMPO-Query-Script.R"))
 }
 
