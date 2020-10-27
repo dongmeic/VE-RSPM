@@ -6,6 +6,7 @@
 # load libraries
 options("rgdal_show_exportToProj4_warnings"="none")
 library(rgdal)
+library(stringr)
 
 drive = 'E'
 
@@ -27,13 +28,13 @@ fields <- vector()
 for(file in bzone.files){
   dt <- read.csv(paste0(inpath, file), stringsAsFactors = FALSE)
   for(field in colnames(dt)[-(which(colnames(dt) %in% c("Geo", "Year")))]){
-    if(length(unique(dt[,field]))>3){
-      # cat(paste0('In ', file, ' has ', field, ' with ', 
-      #            length(unique(dt[,field])),' unique values\n'))
-      if(length(unique(dt[,field]))>10){
-        fields <- c(fields, field)
-      }
-    }
+    # if(length(unique(dt[,field]))>3){
+    #   # cat(paste0('In ', file, ' has ', field, ' with ', 
+    #   #            length(unique(dt[,field])),' unique values\n'))
+    #   if(length(unique(dt[,field]))>10){
+    fields <- c(fields, field)
+    #   }
+    # }
   }
 }
 
@@ -42,12 +43,16 @@ df <- dt[dt$Year==2010,c('Year', 'Geo')]
 for(file in bzone.files){
   dt <- read.csv(paste0(inpath, file), stringsAsFactors = FALSE)
   print(file)
-  if(any(colnames(dt) %in% fields)){
-    df <- merge(df, dt[,which(colnames(dt) %in% c('Geo', fields))], by='Geo')
-  }
+  print(dim(dt))
+  # if(any(colnames(dt) %in% fields)){
+  df <- merge(unique(df), unique(dt[dt$Year==2010,which(colnames(dt) %in% c('Geo', fields))]), by='Geo', all=TRUE)
+  print(dim(df))
+  # }
 }
 outfolder <- 'C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/'
-write.csv(df, paste0(outfolder, "bzone_input_with_more_unique_values.csv"), 
+# write.csv(df, paste0(outfolder, "bzone_input_with_more_unique_values.csv"), 
+#           row.names = FALSE)
+write.csv(df, paste0(outfolder, "bzone_input_values.csv"), 
           row.names = FALSE)
 
 head(bzone.bd@data)
@@ -63,11 +68,13 @@ df <- dt[dt$Year==2010,c('Year', 'Geo')]
 for(file in files){
   load(paste0(outpath, file))
   df.s <- data.frame(v=Dataset[1:67])
-  if(length(unique(df.s$v)) > 10){
-    colnames(df.s) <- str_remove(file, ".Rda")
-    df <- cbind(df, df.s)    
-  }
+  # if(length(unique(df.s$v)) > 10){
+  colnames(df.s) <- str_remove(file, ".Rda")
+  df <- cbind(df, df.s)    
+  # }
 }
 outfolder <- 'C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/'
-write.csv(df, paste0(outfolder, "bzone_output_with_more_unique_values.csv"), 
+# write.csv(df, paste0(outfolder, "bzone_output_with_more_unique_values.csv"), 
+#           row.names = FALSE)
+write.csv(df, paste0(outfolder, "bzone_output_values.csv"), 
           row.names = FALSE)

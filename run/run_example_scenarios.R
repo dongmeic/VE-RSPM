@@ -277,12 +277,15 @@ Sys.time() - start.time
 
 # step 3: get the output measures
 setwd(paste0(path, 'CLMPO-scenarios'))
+start.time <- Sys.time()
 for(runnm in c(10, 100, 1000,10000)){
   source(paste0(path,"CLMPO-scenarios/CLMPO-Query-Script.R"))
 }
+Sys.time() - start.time
 
 # infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
-# scenarios <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
+scenarios <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
+scenarios <- scenarios$S
 # tests <- scenarios$S[1:5]
 combine.output <- function(tests){
   path = paste0(path, "CLMPO-scenarios/")
