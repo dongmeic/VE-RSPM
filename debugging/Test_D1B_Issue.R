@@ -9,12 +9,13 @@
 
 # Setup ----
 library(tidyverse) # if fails, install.packages('tidyverse')
+setwd('E:/VisionEval')
 
-model_dir <- 'models/VERSPM_CLMPO' # Change as appropriate
+model_dir <- 'models/CLMPO' # Change as appropriate
 
 geo <- read_csv(file.path(model_dir, 'defs', 'geo.csv'))
 
-output_to_load = 'Datastore/2010/Bzone/D1B.Rda'
+output_to_load = 'Datastore/2040/Bzone/D1B.Rda'
 
 if(!file.exists(file.path(model_dir, output_to_load))){
   stop('File not found. Please complete the VERSPM base run before running this script')
@@ -37,7 +38,7 @@ geo <- geo %>%
          high_density_Bzones = ifelse(D1B_rank < 10, Bzone, NA))
 
 # Make a plot of area by density
-ggplot(geo %>% filter(Year == '2010'), aes(x = UrbanArea, 
+ggplot(geo %>% filter(Year == '2040'), aes(x = UrbanArea, 
                                            y = D1B,
                                            label = high_density_Bzones)) +
   geom_point() +
@@ -51,7 +52,7 @@ ggsave('Density_vs_Area_by_Bzone.jpeg')
 bzdu <- read_csv(file.path(model_dir, 'inputs', 'bzone_dwelling_units.csv'))
 
 bzdu10 <- bzdu %>%
-  filter(Year == "2010") %>%
+  filter(Year == "2040") %>%
   select(Geo, SFDU, MFDU) %>%
   rename(Bzone = Geo) %>%
   mutate(AllDU = SFDU + MFDU)

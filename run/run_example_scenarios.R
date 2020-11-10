@@ -17,6 +17,37 @@ infile <- read_excel(paste0(infolder, "sensitivity_test_inputs.xlsx"), sheet = "
 head(infile)
 path <- paste0(drive.path, '/VisionEval/models/')
 
+# remove existing files and folders
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+comb <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
+scenarios <- comb$S
+
+clean.files <- function(){
+  path <- "E:/VisionEval/models/CLMPO-scenarios/"
+  file <- list.files(path = paste0(path, '01-Base-Year-2010'), pattern = 'txt',
+                   all.files = TRUE, full.names = TRUE)
+  file.remove(file)
+  file.remove(paste0(path, '01-Base-Year-2010/ModelState.Rda'))
+  unlink(paste0(path, '01-Base-Year-2010/Datastore'), recursive = T)
+  
+  for(s in scenarios){
+    i = which(scenarios==s) + 1
+    path <- "E:/VisionEval/models/CLMPO-scenarios/"
+    path <- paste0(path, 0, i, '-', s)
+    file <- list.files(path = path, pattern = 'txt', all.files = TRUE,
+                       full.names = TRUE)
+    file.remove(file)
+    file.remove(paste0(path, '/ModelState.Rda'))
+    unlink(paste0(path, '/Datastore'), recursive = T)
+    file <- list.files(path = path, pattern = 'csv', all.files = TRUE,
+                       full.names = TRUE)
+    file.remove(file)
+    print(s)
+  }
+}
+
+clean.files()
+
 # copy files
 copy.files <- function(path, s, i){
   currentfiles <- list.files(paste0(path, 'model'), recursive = FALSE)

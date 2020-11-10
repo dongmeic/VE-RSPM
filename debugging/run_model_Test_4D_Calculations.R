@@ -1,6 +1,7 @@
 #===========
 #run_model.R - Modified to manually check the Calculate4DMeasures method.
 #Author: Dan Flynn (Daniel.Flynn@dot.gov)
+#Modified by: Dongmei Chen (dchen@lcog.org)
 #===========
 
 # Assumes model directory is named VERSPM_CLMPO, change as appropriate for how you named the model directory
@@ -9,7 +10,7 @@
 
 library(tidyverse)
 
-model_dir <- 'models/VERSPM_CLMPO' # Change as appropriate
+model_dir <- 'models/CLMPO' # Change as appropriate
 
 setwd(model_dir)
 
@@ -33,8 +34,8 @@ initializeModel(
 cat('run_model.R: initializeModel completed\n')
 
 #---------------------------------
-# Run for just 2010
-Year = '2010'
+# Run for just 2040
+Year = '2040'
 
 runModule("CreateHouseholds",                "VESimHouseholds",       RunFor = "AllYears",    RunYear = Year)
 runModule("PredictWorkers",                  "VESimHouseholds",       RunFor = "AllYears",    RunYear = Year)
@@ -138,6 +139,7 @@ if (any(IsHighDensity_)) {
     "Check your Bzone area and housing inputs for these Bzones and make ",
     "sure that they are correct."
   )
+  print(Msg)
   addWarningMsg("Out_ls", Msg)
   rm(Msg)
 }
@@ -148,12 +150,12 @@ D1C_ <- with(D_df, TotEmp / Area)
 D1D_ <- with(D_df, (TotEmp + NumHh) / Area)
 
 # Examine D1B_ output
-D1B_[Bz == 'Eug-41039003700'] # 54.2642 persons/acre in out Bzone of interest
+D1B_[Bz == 'Eug-41039003700'] # 100.9419 persons/acre in out Bzone of interest
 
-pop = D_df$Pop[Bz == 'Eug-41039003700'] # 4449
+pop = D_df$Pop[Bz == 'Eug-41039003700'] # 8276
 area = D_df$Area[Bz == 'Eug-41039003700'] # 81.98775
 
-pop/area # 54.2642 persons per acre
+pop/area # 100.9419 persons per acre
 
 # -------------------------------
 # Back to runModule steps 
@@ -162,19 +164,19 @@ pop/area # 54.2642 persons per acre
 R <- M$Func(L)
   
 # Examine results from the runModule approach to this step
-R$Year$Bzone$D1B[L$Year$Bzone$Bzone == 'Eug-41039003700'] # 54.2642, same as before
+R$Year$Bzone$D1B[L$Year$Bzone$Bzone == 'Eug-41039003700'] # 100.9419, same as before
 
 # Ok, so far looks good. Now use the standard approach to calling Calculate4DMeasures, then we will examine the ouput in the datastore
 
 runModule("Calculate4DMeasures",             "VELandUse",             RunFor = "AllYears",    RunYear = Year)
 
 # Now look at the output in the datastore
-output_to_load = 'Datastore/2010/Bzone/D1B.Rda'
+output_to_load = 'Datastore/2040/Bzone/D1B.Rda'
 
 load(file.path(output_to_load))
 
 attr(Dataset, 'UNITS') # Persons per square mile now!
-Dataset[Bz == 'Eug-41039003700'] # 34729.09 persons per square mile
+Dataset[Bz == 'Eug-41039003700'] # 64602.82 persons per square mile
 
 # When did the conversion happen? Multiple times, in fact.
 # First, in initialzeModel, the default area is set to the units in defs/units.csv
