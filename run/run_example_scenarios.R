@@ -3,6 +3,7 @@
 # By: Dongmei Chen (dchen@lcog.org)
 # September 21st, 2020 
 
+################################## ALWAYS RUN THIS FIRST #####################################################
 drive = 'E'
 
 if(drive == 'C'){
@@ -17,6 +18,7 @@ infile <- read_excel(paste0(infolder, "sensitivity_test_inputs.xlsx"), sheet = "
 head(infile)
 path <- paste0(drive.path, '/VisionEval/models/')
 
+################################## RUN THIS ONLY WHEN TO DELETE OUTPUT ########################################
 # remove existing files and folders
 infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
 comb <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
@@ -48,6 +50,7 @@ clean.files <- function(){
 
 clean.files()
 
+################################## RUN THIS ONLY WHEN TO COPY INPUT ########################################
 # copy files
 copy.files <- function(path, s, i){
   currentfiles <- list.files(paste0(path, 'model'), recursive = FALSE)
@@ -65,6 +68,7 @@ copy.files <- function(path, s, i){
             to=paste0(newlocation, "/run_model.R"), overwrite = TRUE, copy.mode = TRUE)
 }
 
+################################## RUN THIS ONE-TIME ONLY ###################################################
 # strategy names and levels
 strategies <- unique(infile$strategy_name)
 all.levels <- list(C=c(0, 1, 2, 3), M=c(1, 2, 3), P=c(1, 2, 3), V=c(0, 1, 2, 3),
@@ -292,7 +296,8 @@ Sys.time() - start.time
 # 22.17732 mins
 cat(paste('It took that much time to create', length(scenarios), 'folders...\n'))
 
-# in case the process has been interruped 
+################################## RUN THIS ONLY WHEN INPUT FOLDERS ARE READY ########################################
+# in case the process has been interruped or the step 1 can be skipped 
 infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
 comb <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
 
