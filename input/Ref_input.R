@@ -28,9 +28,9 @@ for(csv in csvfiles){
         target <- infile$file == csv & infile$variable == var & infile$policy_name == 1 & infile$strategy_level %in% c(0, 1)
         if('NA' %in% infile[target,]$city){
           if(var == 'CarSvcLevel'){
-            dt[dt$Year == 2040,var] <- unique(infile[target,]$value)
+            dt[dt$Year == 2040, var] <- unique(infile[target,]$value)
           }else{
-            dt[dt$Year == 2040,var] <- as.numeric(unique(infile[target,]$value))
+            dt[dt$Year == 2040, var] <- as.numeric(unique(infile[target,]$value))
           }
         }else{
           dt[dt$Year == 2040,var] <- as.numeric(infile[target,]$value)

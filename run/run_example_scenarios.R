@@ -3,7 +3,7 @@
 # By: Dongmei Chen (dchen@lcog.org)
 # September 21st, 2020 
 
-################################## ALWAYS RUN THIS FIRST #####################################################
+################################## ALWAYS RUN THIS FIRST ###################################################
 drive = 'E'
 
 if(drive == 'C'){
@@ -11,11 +11,6 @@ if(drive == 'C'){
 }else{
   drive.path = 'E:'
 }
-
-library(readxl)
-infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
-infile <- read_excel(paste0(infolder, "sensitivity_test_inputs.xlsx"), sheet = "clmpo")
-head(infile)
 path <- paste0(drive.path, '/VisionEval/models/')
 
 ################################## RUN THIS ONLY WHEN TO DELETE OUTPUT ########################################
@@ -69,6 +64,11 @@ copy.files <- function(path, s, i){
 }
 
 ################################## RUN THIS ONE-TIME ONLY ###################################################
+library(readxl)
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+infile <- read_excel(paste0(infolder, "sensitivity_test_inputs.xlsx"), sheet = "clmpo")
+head(infile)
+
 # strategy names and levels
 strategies <- unique(infile$strategy_name)
 all.levels <- list(C=c(0, 1, 2, 3), M=c(1, 2, 3), P=c(1, 2, 3), V=c(0, 1, 2, 3),
@@ -319,7 +319,7 @@ for(runnm in c(10, 100, 1000,10000)){
 }
 Sys.time() - start.time
 
-# infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
 scenarios <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
 scenarios <- scenarios$S
 # tests <- scenarios$S[1:5]
