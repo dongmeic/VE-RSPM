@@ -81,10 +81,6 @@ start.time <- Sys.time()
 source(paste0(path,"ETSP-scenarios/CLMPO-Query-Script.R"))
 Sys.time() - start.time
 
-################################# Get the outputs ############################################
-
-
-
-
-
-
+# get the reference scenario output
+ETSP_reference <- openModel("reference")
+ETSP_reference$run()
