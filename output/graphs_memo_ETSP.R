@@ -23,7 +23,7 @@ for(s in scenarios) {
 }
 
 head(data)
-data$Measure
+#data$Measure
 
 # select variables
 
