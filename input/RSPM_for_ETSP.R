@@ -12,7 +12,7 @@ csvfiles <- list.files(path = inpath, pattern = ".csv")
 print(csvfiles)
 
 infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/memo/"
-infile <- read_excel(paste0(infolder, "scenarios_City_of_Eugene.xlsx"), sheet = "Updated")
+infile <- read_excel(paste0(infolder, "scenarios_City_of_Eugene.xlsx"), sheet = "Updated3")
 #infile <- read_excel(paste0(infolder, "scenarios_City_of_Eugene.xlsx"), sheet = "Original")
 head(infile)
 
@@ -82,14 +82,15 @@ copy.files()
 ################################# Run the model ############################################
 setwd("E:/VisionEval")
 library(visioneval)
-ETSP_scenarios <- openModel("ETSP-scenarios")
+#ETSP_scenarios <- openModel("ETSP-scenarios")
+ETSP_scenarios <- openModel("ETSP-test")
 ETSP_scenarios$run()
-
 
 ################################# Get the outputs ############################################
 runnm = 10
 path <- 'E:/VisionEval/models/'
-setwd(paste0(path, 'ETSP-scenarios'))
+#setwd(paste0(path, 'ETSP-scenarios'))
+setwd(paste0(path, 'ETSP-test'))
 start.time <- Sys.time()
 source(paste0(path,"ETSP-scenarios/CLMPO-Query-Script.R"))
 Sys.time() - start.time
@@ -119,9 +120,13 @@ copy.output(s="03-Scenario2")
 
 ETSP_scenarios$clear()
 
-# get the reference scenario output
-ETSP_reference <- openModel("reference")
-ETSP_reference$run()
-
-copy.output(s="reference")
-ETSP_reference$clear()
+# # get the reference scenario output
+# ETSP_reference <- openModel("reference")
+# ETSP_reference$run()
+# 
+# # run the output only
+# setwd("E:/VisionEval/models/reference")
+# source("CLMPO-Query-Script.r")
+# 
+# copy.output(s="reference")
+# ETSP_reference$clear()
