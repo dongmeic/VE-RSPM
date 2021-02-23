@@ -21,7 +21,8 @@ source("C:/Users/DChen/all/GitHub/VE-RSPM/run/VE_CLMPO_functions.R")
 infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
 scen.list <- read.csv(paste0(infolder, "scenario_list_with_categories.csv")) 
 
-scenarios <- c('B1C1D1E1F1G1I1P1T1V1', 
+scenarios <- c('B0C1D1E1F0G1I1P0T1V1',
+               'B1C1D1E1F1G1I1P1T1V1', 
                'B2C2D2E2F2G2I2P2T2V2', 
                'B2C3D3E3F3G3I3P3T3V2')
 
@@ -49,10 +50,8 @@ start.time <- Sys.time()
 source("CLMPO-Query-Script.R")
 Sys.time() - start.time
 
-copy.output(s='02-B1C1D1E1F1G1I1P1T1V1', f='ETSP-sensitivity')
-copy.output(s='03-B2C2D2E2F2G2I2P2T2V2', f='ETSP-sensitivity')
-copy.output(s='04-B2C3D3E3F3G3I3P3T3V2', f='ETSP-sensitivity')
-
-
-
-
+for(s in scenarios){
+  i = which(scenarios==s) + 1
+  foldernm = paste0(0, i, '-', s)
+  copy.output(s=foldernm, f='ETSP-sensitivity')
+}

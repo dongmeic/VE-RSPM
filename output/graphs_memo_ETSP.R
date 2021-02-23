@@ -8,7 +8,8 @@ library(ggplot2)
 
 path <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/memo/output/"
 #scenarios <- c("Reference", "Scenario1", "Scenario2")
-scenarios <- c('B1C1D1E1F1G1I1P1T1V1', 
+scenarios <- c('B0C1D1E1F0G1I1P0T1V1',
+               'B1C1D1E1F1G1I1P1T1V1', 
                'B2C2D2E2F2G2I2P2T2V2', 
                'B2C3D3E3F3G3I3P3T3V2')
 
@@ -29,7 +30,8 @@ head(data)
 #data$Measure
 
 # select variables
-get.var.df <- function(key="CO2e", keynm="GHG emissions"){
+get.var.df <- function(key="CO2e", keynm="GHG emissions", n=4, # n is the number of scenarios
+                       scenario_names=c("Level 0", "Level 1", "Level 2", "Level 3")){ 
   if(key %in% c("CO2e", "GGE")){
     vars <- grep("Ldv|HvyTrk", grep(key, data$Measure, value = TRUE), value = TRUE)
     vars <- vars[!grepl("Rate", vars)]
@@ -38,15 +40,15 @@ get.var.df <- function(key="CO2e", keynm="GHG emissions"){
   }
 
   df <- data[data$Measure %in% vars,]
-  outdf <- df[,4:7]
+  outdf <- df[,4:(4+n)]
   out <- colSums(outdf)
   out <- sapply(out, function(x) (x-out[1])/out[1])
   
-  outdata <- data.frame(out[2:4])
+  outdata <- data.frame(out[2:(1+n)])
   colnames(outdata) <- "Value"
   rownames(outdata) <- NULL
   outdata$Variable <- keynm
-  outdata$Scenario <- c("2040 Adopted Plans", "2040 What If #1", "2040 What If #2")
+  outdata$Scenario <- scenario_names
   return(outdata)
 }
 
@@ -69,13 +71,20 @@ plot_base_clean <- plot_base +
         # removing borders also removes x and y axes. Add them back
         axis.line = element_line())
 
+n=4
+
+if(n==3){
+  alpval = c(0.6,0.8,1)
+}else if(n==4){
+  alpval = c(0.4,0.6,0.8,1)
+}
 
 p <- plot_base_clean +
   # bar graph
   geom_bar(stat="identity", position=position_dodge(), colour="black", aes(alpha = Scenario))+
   # color settings
   scale_fill_brewer(palette="Dark2")+
-  scale_alpha_manual(values = c(0.6,0.8,1))+
+  scale_alpha_manual(values = alpval)+
   # change y from decimal to percentage
   scale_y_continuous(labels = scales::percent_format(accuracy = 1))+
   # add labels
