@@ -7,11 +7,14 @@
 library(ggplot2)
 
 path <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/memo/output/"
-scenarios <- c("Reference", "Scenario1", "Scenario2")
+#scenarios <- c("Reference", "Scenario1", "Scenario2")
+scenarios <- c('B1C1D1E1F1G1I1P1T1V1', 
+               'B2C2D2E2F2G2I2P2T2V2', 
+               'B2C3D3E3F3G3I3P3T3V2')
 
 # combine tables
 for(s in scenarios) {
-  if(s == "Reference"){
+  if(s == "Reference" | s == scenarios[1]){
     data <- read.csv(paste0(path, s, ".csv"), stringsAsFactors = FALSE)
     colnames(data)[dim(data)[2]] <- s
   }else{
@@ -26,7 +29,6 @@ head(data)
 #data$Measure
 
 # select variables
-
 get.var.df <- function(key="CO2e", keynm="GHG emissions"){
   if(key %in% c("CO2e", "GGE")){
     vars <- grep("Ldv|HvyTrk", grep(key, data$Measure, value = TRUE), value = TRUE)
@@ -84,7 +86,7 @@ p <- plot_base_clean +
   labs(x=NULL, y="Percent change from 2010 to 2040")
 
 ppi <- 300
-png(paste0(path, "change_2010_2040.png"), width=9*ppi, height=6*ppi, res=ppi)
+png(paste0(path, "change_sensitivity.png"), width=9*ppi, height=6*ppi, res=ppi)
 #par(mar=c(2,0,2,1))
 print(p)
 dev.off()
