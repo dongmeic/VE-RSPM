@@ -1,6 +1,7 @@
 # Objective: generate graphs for the ETSP memo
 # By: Dongmei Chen (dchen@lcog.org)
 # November 23rd, 2020
+# Updated on February 23rd, 2020
 # Reference: RSPM_for_ETSP.R
 
 # load libraries
@@ -52,7 +53,7 @@ get.var.df <- function(key="CO2e", keynm="GHG emissions", n=4, # n is the number
   return(outdata)
 }
 
-dat <- rbind(get.var.df(), get.var.df(key="GGE", keynm="Fuel consumption"),
+dat <- rbind(get.var.df(), #get.var.df(key="GGE", keynm="Fuel consumption"),
              get.var.df(key="AveHhDVMT", keynm="DVMT"),
              get.var.df(key="WalkTrips", keynm="Walk trips"),
              get.var.df(key="VehCostPM", keynm="Vehicle cost per mile"))
@@ -67,7 +68,7 @@ plot_base_clean <- plot_base +
   # remove gridlines. panel.grid.major is for vertical lines, panel.grid.minor is for horizontal lines
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         # remove borders
-        panel.border = element_blank(),
+        #panel.border = element_blank(),
         # removing borders also removes x and y axes. Add them back
         axis.line = element_line())
 
