@@ -1,4 +1,4 @@
-# Objective: Run the most recent VE version
+# Objective: Run the version 2020-09-18
 # By: Dongmei Chen (dchen@lcog.org)
 # August 26th, 2020 
 
@@ -8,7 +8,7 @@ Base <- openModel("CLMPO")
 Base$run()
 Base$clear()
 
-yBase$status
+Base$status
 Base$groups
 Base$tables
 Base$fields
