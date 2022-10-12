@@ -2,11 +2,13 @@
 # By: Dongmei Chen (dchen@lcog.org)
 # August 26th, 2020 
 
-source("DoOregonUpdate.R")
-Base <- openModel("CLMPO-test")
+#source("DoOregonUpdate.R")
+library(visioneval)
+Base <- openModel("CLMPO")
 Base$run()
+Base$clear()
 
-Base$status
+yBase$status
 Base$groups
 Base$tables
 Base$fields

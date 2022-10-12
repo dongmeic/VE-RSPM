@@ -3,6 +3,7 @@
 # By: Dongmei Chen (dchen@lcog.org)
 # September 21st, 2020 
 
+################################## ALWAYS RUN THIS FIRST ###################################################
 drive = 'E'
 
 if(drive == 'C'){
@@ -10,13 +11,41 @@ if(drive == 'C'){
 }else{
   drive.path = 'E:'
 }
-
-library(readxl)
-infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
-infile <- read_excel(paste0(infolder, "sensitivity_test_inputs.xlsx"), sheet = "clmpo")
-head(infile)
 path <- paste0(drive.path, '/VisionEval/models/')
 
+################################## RUN THIS ONLY WHEN TO DELETE OUTPUT ########################################
+# remove existing files and folders
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+comb <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
+scenarios <- comb$S
+
+clean.files <- function(){
+  path <- "E:/VisionEval/models/CLMPO-scenarios/"
+  file <- list.files(path = paste0(path, '01-Base-Year-2010'), pattern = 'txt',
+                   all.files = TRUE, full.names = TRUE)
+  file.remove(file)
+  file.remove(paste0(path, '01-Base-Year-2010/ModelState.Rda'))
+  unlink(paste0(path, '01-Base-Year-2010/Datastore'), recursive = T)
+  
+  for(s in scenarios){
+    i = which(scenarios==s) + 1
+    path <- "E:/VisionEval/models/CLMPO-scenarios/"
+    path <- paste0(path, 0, i, '-', s)
+    file <- list.files(path = path, pattern = 'txt', all.files = TRUE,
+                       full.names = TRUE)
+    file.remove(file)
+    file.remove(paste0(path, '/ModelState.Rda'))
+    unlink(paste0(path, '/Datastore'), recursive = T)
+    file <- list.files(path = path, pattern = 'csv', all.files = TRUE,
+                       full.names = TRUE)
+    file.remove(file)
+    print(s)
+  }
+}
+
+clean.files()
+
+################################## RUN THIS ONLY WHEN TO COPY INPUT ########################################
 # copy files
 copy.files <- function(path, s, i){
   currentfiles <- list.files(paste0(path, 'model'), recursive = FALSE)
@@ -33,6 +62,12 @@ copy.files <- function(path, s, i){
   file.copy(from = paste0(path, 'CLMPO-Staged/02-Scenario-1-2040/run_model.R'),
             to=paste0(newlocation, "/run_model.R"), overwrite = TRUE, copy.mode = TRUE)
 }
+
+################################## RUN THIS ONE-TIME ONLY ###################################################
+library(readxl)
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+infile <- read_excel(paste0(infolder, "sensitivity_test_inputs.xlsx"), sheet = "clmpo")
+head(infile)
 
 # strategy names and levels
 strategies <- unique(infile$strategy_name)
@@ -261,7 +296,8 @@ Sys.time() - start.time
 # 22.17732 mins
 cat(paste('It took that much time to create', length(scenarios), 'folders...\n'))
 
-# in case the process has been interruped 
+################################## RUN THIS ONLY WHEN INPUT FOLDERS ARE READY ########################################
+# in case the process has been interruped or the step 1 can be skipped 
 infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
 comb <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
 
@@ -283,7 +319,7 @@ for(runnm in c(10, 100, 1000,10000)){
 }
 Sys.time() - start.time
 
-# infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
+infolder <- "C:/Users/DChen/OneDrive - lanecouncilofgovernments/VE-RSPM/sensitivity_tests/"
 scenarios <- read.csv(paste0(infolder, "scenario_list.csv"), stringsAsFactors = FALSE)
 scenarios <- scenarios$S
 # tests <- scenarios$S[1:5]
