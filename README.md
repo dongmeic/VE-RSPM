@@ -4,6 +4,8 @@ The repo includes scripts for editings in the input, model running, and output. 
 
 # How to start
 
-The most recent version of VisionEval can be downloaded [here](https://visioneval.org/category/download.html). Install the required R version for the specific VE version before launching `VisionEval.Rproj` to install VisionEval. The "[Getting Started](https://visioneval.org/docs/getting-started.html#getting-started)" is where to start on the set up and model running. 
+The most recent version of VisionEval can be downloaded [here](https://visioneval.org/category/download.html). Install the required R version for the specific VE version before launching `VisionEval.Rproj` in the installer's folder to install VisionEval. The "[Getting Started](https://visioneval.org/docs/getting-started.html#getting-started)" is where to start on the set up and model running. 
 
 ## VE 3.0 R4.1.3_2022-05-27
+
+The walkthrough steps provide guidance to use the functions for model installation and running, input setting, and output queries and visualization. Key changes on this version are explained [here](https://github.com/VisionEval/VisionEval-Dev/releases/tag/beta-release-0.9). 
