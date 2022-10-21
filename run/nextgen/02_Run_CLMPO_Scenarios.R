@@ -13,11 +13,54 @@ require(VEModel)
 library(stringr)
 library(readxl)
 
+# run after the scenarios-cat model is installed and this step is irreversible
+# make sure a copy of the scenarios folder exist in case of errors
 scenarios.cat <- openModel("VERSPM-scenarios-cat")
 dirfiles <- scenarios.cat$dir(scenarios=TRUE,all.files=TRUE)
 # check the existing category names
 catnm <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][1])))
-# check the clmpo category names
+# check the clmpo (cl) category names
 infolder <- "T:/DCProjects/Modeling/VE-RSPM/Notes/Scenarios"
 infile <- read_excel(file.path(infolder, "sensitivity_test_inputs.xlsx"), sheet = "clmpo")
 catnm_cl <- unique(infile$category_name)
+# clean the existing files in the scenarios folder
+clean.files <- function(){
+  # delete files
+  files <- list.files(path = 'models/VERSPM-scenarios-cat/scenarios', pattern = 'cnf',
+                     all.files = TRUE, full.names = TRUE)
+  file.remove(files)
+  # delete files in folders
+  unlink('models/VERSPM-scenarios-cat/scenarios', recursive = T)
+}
+clean.files()
+# create a new list of folders
+# check existing input files
+infiles <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][3])))
+infiles_cl <- unique(infile$file)
+infiles[!(infiles %in% infiles_cl)]
+infiles_cl[!(infiles_cl %in% infiles)]
+
+# scefile refers the scenario table, scefolder refers to the path where scenarios'input files are saved
+inpath <- "T:/Models/VisionEval/VE-3.0-Installer-Windows-R4.1.3_2022-05-27/models/VERSPM-scenarios-cat/scenarios"
+create_dir <- function(scefile = infile, scefolder = inpath){
+  catnms <- unique(scefile$category_name)
+  for(catnm in catnms){
+    folder_to_create <- file.path(scefolder, catnm)
+    if(file.exists(folder_to_create)){
+      cat(paste0(folder_to_create, ' already exists.\n'))
+    }else{
+      dir.create(folder_to_create)
+    }
+    policynms <-unique(scefile[scefile$category_name == catnm,]$policy_name) 
+    for(policynm in policynms){
+      subfolder_to_create <- file.path(scefolder, catnm, policynm)
+      if(file.exists(subfolder_to_create)){
+        cat(paste0(subfolder_to_create, ' already exists.\n'))
+      }else{
+        dir.create(subfolder_to_create)
+      }
+    }
+  }
+}
+
+create_dir()
