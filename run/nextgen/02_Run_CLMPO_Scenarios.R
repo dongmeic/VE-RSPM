@@ -15,6 +15,10 @@ library(readxl)
 
 # run after the scenarios-cat model is installed and this step is irreversible
 # make sure a copy of the scenarios folder exist in case of errors
+
+# make the copy when errors occur
+wd <- getwd()
+print
 scenarios.cat <- openModel("VERSPM-scenarios-cat")
 dirfiles <- scenarios.cat$dir(scenarios=TRUE,all.files=TRUE)
 # check the existing category names
@@ -35,17 +39,18 @@ clean.files <- function(){
 clean.files()
 # create a new list of folders
 # check existing input files
-infiles <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][3])))
+#infiles <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][3])))
+scefolder = "models/VERSPM-scenarios-cat"
+infiles <- list.files(file.path(scefolder, "inputs"), recursive = FALSE)
 infiles_cl <- unique(infile$file)
 infiles[!(infiles %in% infiles_cl)]
 infiles_cl[!(infiles_cl %in% infiles)]
 
 # scefile refers the scenario table, scefolder refers to the path where scenarios'input files are saved
-inpath <- "T:/Models/VisionEval/VE-3.0-Installer-Windows-R4.1.3_2022-05-27/models/VERSPM-scenarios-cat/scenarios"
-create_dir <- function(scefile = infile, scefolder = inpath){
+create_dir <- function(scefile = infile, scefolder = "models/VERSPM-scenarios-cat"){
   catnms <- unique(scefile$category_name)
   for(catnm in catnms){
-    folder_to_create <- file.path(scefolder, catnm)
+    folder_to_create <- file.path(scefolder, "scenarios", catnm)
     if(file.exists(folder_to_create)){
       cat(paste0(folder_to_create, ' already exists.\n'))
     }else{
@@ -53,7 +58,7 @@ create_dir <- function(scefile = infile, scefolder = inpath){
     }
     policynms <-unique(scefile[scefile$category_name == catnm,]$policy_name) 
     for(policynm in policynms){
-      subfolder_to_create <- file.path(scefolder, catnm, policynm)
+      subfolder_to_create <- file.path(scefolder, "scenarios", catnm, policynm)
       if(file.exists(subfolder_to_create)){
         cat(paste0(subfolder_to_create, ' already exists.\n'))
       }else{
@@ -64,3 +69,23 @@ create_dir <- function(scefile = infile, scefolder = inpath){
 }
 
 create_dir()
+
+# add the modified input file
+copy_files <- function(scefile = infile, scefolder = "models/VERSPM-scenarios-cat"){
+  catnms <- unique(scefile$category_name)
+  for(catnm in catnms){
+    policynms <- unique(scefile[scefile$category_name == catnm,]$policy_name) 
+    for(policynm in policynms){
+      filepath <- file.path(scefolder, "scenarios", catnm, policynm)
+      inputfiles <- infile[infile$category_name==catnm & infile$policy_name == policynm,]$file
+      for(inputfile in inputfiles){
+        file.copy(from=file.path(scefolder, "inputs", inputfile), to=filepath, 
+                  overwrite = TRUE, recursive = TRUE, copy.mode = TRUE)
+        cat(paste0(filepath, "/", inputfile, '\n'))
+      }
+    }
+  }
+}
+copy_files()
+
+
