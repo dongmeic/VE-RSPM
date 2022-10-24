@@ -77,7 +77,7 @@ copy_files <- function(scefile = infile, scefolder = "models/VERSPM-scenarios-ca
     policynms <- unique(scefile[scefile$category_name == catnm,]$policy_name) 
     for(policynm in policynms){
       filepath <- file.path(scefolder, "scenarios", catnm, policynm)
-      inputfiles <- infile[infile$category_name==catnm & infile$policy_name == policynm,]$file
+      inputfiles <- unique(scefile[scefile$category_name==catnm & scefile$policy_name == policynm,]$file)
       for(inputfile in inputfiles){
         file.copy(from=file.path(scefolder, "inputs", inputfile), to=filepath, 
                   overwrite = TRUE, recursive = TRUE, copy.mode = TRUE)
@@ -88,4 +88,129 @@ copy_files <- function(scefile = infile, scefolder = "models/VERSPM-scenarios-ca
 }
 copy_files()
 
+# modify the inputs
+modify_single_input <- function(scefile = infile,
+                                scefolder = "models/VERSPM-scenarios-cat",
+                                cat = 'I',
+                                csv = 'azone_per_cap_inc.csv', 
+                                var = 'HHIncomePC.2010',
+                                cty = 'Eugene',
+                                lvl = 1,
+                                writeout = TRUE){
+  cat(paste('Modifying', csv, '...\n'))
+  cat(paste0('The strategy is ', unique(scefile[scefile$category_name == cat,]$strategy_label),
+             ', the category is ', cat, ', the variable is ', var, ', and the level is ', lvl, '.\n'))
+  filepath <- file.path(scefolder, "scenarios", cat, lvl)
+  input.csv <- read.csv(file.path(filepath, csv),  stringsAsFactors = FALSE)
+  target.df <- subset(scefile, category_name == cat & file == csv & 
+                        variable == var & city == cty & policy_name == lvl)
+  
+  # the value to check and modify
+  if(cty != 'NA'){
+    v1 <-  unique(input.csv[input.csv$Year == 2040 & input.csv$Geo %in% cty, var])
+  }else{
+    v1 <- unique(input.csv[input.csv$Year == 2040, var])
+  }
+  
+  # the value is used to modify
+  if(var == 'CarSvcLevel'){
+    v2 <- unique(target.df$value)
+  }else{
+    v2 <- unique(as.numeric(target.df$value))
+    if(length(v2) != 1){
+      cat(paste0('!!!!!!!The number of target value is ', length(v2), '...\n'))
+    }
+  }
+  
+  if(v2 %in% v1){
+    cat('The values are exactly the same or the modified value is in the original value list...\n')
+  }else{
+    cat('The values are possibly different in data types or completely different...\n')
+    if(var %in% names(input.csv)){
+      if(cty != 'NA'){
+        cat(paste0('The original value for the variable ', var, ' is ', v1, ' in ', cty, ";\n"))
+        input.csv[input.csv$Year == 2040 & input.csv$Geo %in% cty, var] <- v2
+      }else{
+        cat(paste0('The original value for the variable ', var, ' is ', v1, ";\n"))
+        input.csv[input.csv$Year == 2040, var] <- v2
+      }
+      
+      cat(paste0("The value has been changed to ", v2, ".\n"))
+    }else{
+      cat("The variable is NOT in the table, check again.\n")
+    }
+    
+  }
+  
+  if(writeout){
+    write.csv(input.csv, file.path(filepath, csv), row.names = FALSE)
+  }else{
+    return(input.csv)
+  }
+}
 
+modify_inputs <- function(scefile = infile, scefolder = "models/VERSPM-scenarios-cat"){
+  catnms <- unique(scefile$category_name)
+  for(catnm in catnms){
+    policynms <- unique(scefile[scefile$category_name == catnm,]$policy_name) 
+    for(policynm in policynms){
+      filepath <- file.path(scefolder, "scenarios", catnm, policynm)
+      inputfiles <- scefile[scefile$category_name==catnm & scefile$policy_name == policynm,]$file
+      for(inputfile in inputfiles){
+        # file to change
+        inputdata <- read.csv(file.path(filepath, inputfile))
+        # data used for input change
+        datainput <- scefile[scefile$category_name == catnm & 
+                               scefile$policy_name == policynm &
+                               scefile$file == inputfile,]
+        vars <- unique(datainput$variable)
+        # cities to check
+        var.cty <- unique(scefile[scefile$file == inputfile,
+                                 c('variable', 'city')])
+        # levels to check
+        var.lvl <- unique(scefile[scefile$file == inputfile,
+                                 c('variable', 'policy_name')])
+        for(var in vars){
+          cities <- subset(var.cty, variable == var)[, 'city']$city
+          lvls <- subset(var.lvl, variable == var)[, 'policy_name']$policy_name
+          lvl <- policynm
+          if('NA' %in% cities){
+            if(lvl %in% lvls){
+              modify_single_input(cat = catnm, 
+                                  csv = inputfile, 
+                                  var = var,
+                                  cty = 'NA',
+                                  lvl = lvl)
+            }else{
+              # adjust the high-level setting with the common baseline with level 1
+              modify_single_input(cat = cat, 
+                                  csv = inputfile, 
+                                  var = var,
+                                  cty = 'NA',
+                                  lvl = 1)
+            }
+          }else{
+            for(city in cities){
+              if(lvl %in% lvls){
+                modify_single_input(cat = cat, 
+                                    csv = inputfile, 
+                                    var = var,
+                                    cty = city,
+                                    lvl = lvl)
+              }else{
+                modify_single_input(cat = cat, 
+                                    csv = inputfile, 
+                                    var = var,
+                                    cty = city,
+                                    lvl = 1)
+              }
+            }
+          }
+        }
+      }
+    }
+    cat(paste0("The input folder for category ", catnm, " is ready!\n")) 
+  }
+}
+
+modify_inputs()
