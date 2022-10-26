@@ -225,16 +225,202 @@ modify_inputs <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-
 modify_inputs()
 
 # create cnf files for configuration
-runConfig_ls <-  list(
-  Model       = "Mini Model Test",
-  Scenario    = "MiniModel",
-  Description = "Minimal model constructed programmatically",
-  Region      = "RVMPO",
-  State       = "OR",
-  BaseYear    = "2010",
-  Years       = c("2010")
+# category (cat)
+clmpo_scen_config_cat <- function(scefile = infile){
+  catconfig <- lapply(unique(scefile$category_name), function(cat){
+    i <- scefile$category_name==cat
+    Label <- scefile$category_label[i][1]
+    Description <- scefile$category_description[i][1]
+    Files <- unique(scefile$file[i])
+    Levels <- structure(names=NULL,lapply(unique(scefile$policy_name[i]), function(level){
+      Label <- scefile$policy_label[i & scefile$policy_name==level][1]
+      Description <- scefile$policy_description[i & scefile$policy_name==level][1]
+      attr(Label, "quoted") <- TRUE
+      attr(Description, "quoted") <- TRUE
+      return((list(Name=as.integer(level),
+                   Label=Label,
+                   Description=Description)))
+    }))
+    attr(Label, "quoted") <- TRUE
+    attr(Description, "quoted") <- TRUE
+    return(list(Name=cat,
+                Label=Label,
+                Description=Description,
+                Files=Files,
+                Levels=Levels))
+  })
+  return(catconfig)
+}
+
+viewSetup(Param_ls=clmpo_scen_config_cat())
+
+# strategy (str)
+clmpo_scen_config_str <- function(scefile = infile){
+  catconfig <- lapply(unique(scefile$strategy_name), function(str){
+    i <- scefile$strategy_name==str
+    Label <- scefile$strategy_label[i][1]
+    Description <- scefile$strategy_description[i][1]
+    Levels <- structure(names=NULL,lapply(unique(scefile$strategy_level[i]), function(level){
+      Name <- as.integer(level)
+      CatNames <- scefile$category_name[i & scefile$strategy_level==level]
+      j <- i & scefile$strategy_level==level
+      Inputs <- structure(names=NULL,lapply(unique(CatNames), function(Name){
+        # possibly with multiple variables for different levels
+        Level <- max(scefile$policy_name[j & scefile$category_name==Name])
+        return((list(Name=Name,
+                     Level=as.integer(Level))))
+      }))
+      return((list(Name=Name,
+                   Inputs=Inputs)))
+    }))
+    attr(Label, "quoted") <- TRUE
+    attr(Description, "quoted") <- TRUE
+    return(list(Name=Label,
+                Description=Description,
+                Levels=Levels))
+  })
+  return(catconfig)
+}
+viewSetup(Param_ls=clmpo_scen_config_str())
+
+clmpo_scen_config <- list(
+  StartFrom = "stage-pop-future",
+  ScenarioElements = clmpo_scen_config_cat(),
+  ScenarioCategories = clmpo_scen_config_str()
 )
 
+configFile <- file.path(scefolder, "scenarios", "visioneval.cnf")
+cat(configFile,"\n")
+yaml::write_yaml(clmpo_scen_config,configFile)
+
+
+
+self=private=NULL
+ve.scenario.scenconfig <- function() {
+  scenconfig <- lapply( self$Elements,
+                        function(scen) {
+                          Instructions <- if( "Instructions" %in% names(scen) )
+                          { scen$Instructions } else { scen$Description }
+                          Levels <- list()
+                          Levels[[1]] <- baseScenarioLevel
+                          for ( level in scen$Levels ) Levels[[length(Levels)+1]] <- level
+                          return( list(
+                            NAME=scen$Name,
+                            LABEL=scen$Label,
+                            DESCRIPTION=scen$Description,
+                            INSTRUCTIONS=Instructions,
+                            LEVELS=structure(
+                              names=NULL,
+                              lapply( Levels,
+                                      function(level) {
+                                        return( list(
+                                          NAME=level$Name,
+                                          LABEL=level$Label,
+                                          DESCRIPTION=level$Description
+                                        ) )
+                                      }
+                              )
+                            )
+                          ) )
+                        }
+  )
+  names(scenconfig) <- NULL # Don't have named objects (visualizer does not like that!)
+  return( scenconfig )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ve.scenario.catconfig <- function() {
+  # iterate over self$Categories
+  catconfig <- structure( names=NULL,
+                          lapply( self$Categories,
+                                  function(cat) {
+                                    Label <- if ( "Label" %in% names(cat) ) cat$Label else cat$Name
+                                    Description <- if ( "Description" %in% names(cat) ) cat$Description else NULL
+                                    baseCategoryLevel <- cat$Levels[[1]]
+                                    baseCategoryLevel$Name <- "0"
+                                    baseCategoryLevel$Inputs <- lapply( baseCategoryLevel$Inputs,
+                                                                        function(inp) {
+                                                                          return( ( list( Name=inp$Name, Level="0" ) ) )
+                                                                        }
+                                    )
+                                    # Build baseCategoryLevel as list of of NAME/LEVEL pairs
+                                    # where NAME is the NAME from each cat$Levels, and LEVEL is "0"
+                                    Levels <- list()
+                                    Levels[[1]] <- baseCategoryLevel
+                                    for ( level in cat$Levels ) Levels[[length(Levels)+1]] <- level
+                                    return( list(
+                                      NAME=cat$Name,
+                                      LABEL=Label,
+                                      DESCRIPTION=Description,
+                                      LEVELS=lapply( Levels,
+                                                     function(level) {
+                                                       return( list(
+                                                         NAME=level$Name,
+                                                         INPUTS=lapply(level$Inputs,
+                                                                       function(input) {
+                                                                         return( list(
+                                                                           NAME=input$Name,
+                                                                           LEVEL=input$Level
+                                                                         ) )
+                                                                       }
+                                                         )
+                                                       ) )
+                                                     }
+                                      )
+                                    ) )
+                                  }
+                          )
+  )
+  return(catconfig)
+}
+self=private=NULL
+ve.scenario.scenconfig <- function() {
+  scenconfig <- lapply( self$Elements,
+                        function(scen) {
+                          Instructions <- if( "Instructions" %in% names(scen) )
+                          { scen$Instructions } else { scen$Description }
+                          Levels <- list()
+                          Levels[[1]] <- baseScenarioLevel
+                          for ( level in scen$Levels ) Levels[[length(Levels)+1]] <- level
+                          return( list(
+                            NAME=scen$Name,
+                            LABEL=scen$Label,
+                            DESCRIPTION=scen$Description,
+                            INSTRUCTIONS=Instructions,
+                            LEVELS=structure(
+                              names=NULL,
+                              lapply( Levels,
+                                      function(level) {
+                                        return( list(
+                                          NAME=level$Name,
+                                          LABEL=level$Label,
+                                          DESCRIPTION=level$Description
+                                        ) )
+                                      }
+                              )
+                            )
+                          ) )
+                        }
+  )
+  names(scenconfig) <- NULL # Don't have named objects (visualizer does not like that!)
+  return( scenconfig )
+}
+
+ve.scenario.scenconfig()
 
 
 # try out running the scenarios
