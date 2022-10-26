@@ -4,7 +4,7 @@ Adjustments on some input files are made to run through the model.
 
 ## Recalculate carbon intensity
 
-The utility shapefile is provided by ODOT and the green house emissiions data is provided by Ellen. 
+The utility shapefile is provided by ODOT and the green house emissions data is provided by Ellen. 
 
 The pop-weighting is calculated by the percentages of areas for each of untility names (EWEB, Springfield Utility Board, Emerald PUD, Lane Elec) in each of the three cities (Eugene, Springfield, and Coburg). This step is processed using both ArcMap and R to compare the results. 
 
