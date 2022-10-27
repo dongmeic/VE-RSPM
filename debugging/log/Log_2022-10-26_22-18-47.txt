@@ -1,0 +1,5 @@
+2022-10-26 22:18:47 : Initializing Model. This may take some time...
+Input file error. File 'marea_transit_ave_fuel_carbon_intensity.csv' required by 'Initialize' is not properly formatted. Could be caused by rows not having same number of entries or values not properly comma separated.
+Error in processInputFiles(envir$ModelState_ls$AllSpecs_ls) : 
+  Input files have errors. Check the log for details.
+
