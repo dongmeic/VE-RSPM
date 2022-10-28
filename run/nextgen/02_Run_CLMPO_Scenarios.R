@@ -302,3 +302,5 @@ scenarios.cat.cl <- openModel("CLMPO-scenarios-cat")
 scenarios.cat.cl$run()
 
 # try out running the base model
+base.cl <- openModel("CLMPO-base")
+base.cl$run()
