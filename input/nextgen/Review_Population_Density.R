@@ -4,7 +4,6 @@
 # click T:\Models\VisionEval\VE-3.0-Installer-Windows-R4.1.3_2022-05-27\VisionEval.Rproj to open RStudio
 
 library(stringr)
-library(rgdal)
 library(sf)
 
 infolder <- "models/CLMPO-base/inputs"
@@ -53,11 +52,11 @@ for(file in files){
 }
 
 # correct unprotected area
-unprotected_area <- readOGR(dsn="C:/Users/DChen/all/VE-RSPM/inputs", layer="bzone_unprotected_area")
-head(unprotected_area@data)
+unprotected_area <- st_read(dsn="T:/DCProjects/Modeling/VE-RSPM/GIS/Shp", layer="bzone_unprotected_area", stringsAsFactors = FALSE)
+head(unprotected_area)
 unique(unprotected_area$DIVISION)
 unprotected_area$Geo <- paste0(substr(unprotected_area$DIVISION, 1, 3), "-", unprotected_area$FIPSTRACT)
-new_df <- unprotected_area@data[unprotected_area$Geo %in% unique(dat$Geo), c("Geo", "Area")]
+new_df <- unprotected_area[unprotected_area$Geo %in% unique(dat$Geo), c("Geo", "Area")]
 colnames(new_df)[2] <- "UrbanArea"
 new_df$Year <- rep(2010, dim(new_df)[1])
 new_df <- new_df[, c("Geo", "Year", "UrbanArea")]
