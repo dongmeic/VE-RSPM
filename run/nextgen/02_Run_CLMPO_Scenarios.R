@@ -297,7 +297,7 @@ configFile <- file.path(scefolder, "scenarios", "visioneval.cnf")
 cat(configFile,"\n")
 yaml::write_yaml(clmpo_scen_config,configFile)
 
-# try out running the scenarios - got an input error
+# try out running the scenarios
 scenarios.cat.cl <- openModel("CLMPO-scenarios-cat")
 scenarios.cat.cl$run()
 
