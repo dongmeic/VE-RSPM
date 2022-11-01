@@ -8,7 +8,10 @@ library(stringr)
 library(sf)
 library(tidyverse)
 
-infolder <- "models/CLMPO-base/inputs"
+modelnm <-  "CLMPO-scenarios-cat" #"CLMPO-base"
+infolder <- file.path("models", modelnm,"inputs")
+
+############################################### Check bzone unprotected area #######################################################
 infile <- "bzone_unprotected_area.csv"
 
 # check one bzone file
@@ -29,12 +32,11 @@ unique(GeoIDs[!(GeoIDs %in% census.tract$GEOID)])
 
 # bzone source data (a CLMPO clip of 2010 census tract?)
 cltracts <- st_read(dsn = 'T:/Trans Projects/Model Development/UrbanSim_LandUse/Inputs/VisionEval',
-                     layer = 'CLTracts_GsBoundary',
-                     stringsAsFactors = FALSE)
+                    layer = 'CLTracts_GsBoundary',
+                    stringsAsFactors = FALSE)
 head(cltracts)
 GeoIDs <- cltracts$FIPSTRACT
 
-############################################### Check bzone unprotected area #######################################################
 # check all bzone files
 files <- list.files(path = infolder, pattern = "^bzone(.*)csv$")
 for(file in files){
@@ -98,18 +100,18 @@ bzone_du_N[bzone_du_N$Geo == 'Eug-41039003700',]$PCT_N
 summary(as.numeric(gq_by_type$P5_001N))
 gq_by_type[gq_by_type$GeoID == '41039003700',]$P5_001N
 
-# manually adjust the value
-bzone_du <- read.csv(file.path("models/CLMPO-base/inputs", "bzone_dwelling_units.csv"),
-                     stringsAsFactors = FALSE)
-bzone_du[bzone_du$Geo == 'Eug-41039003800' & bzone_du$Year == 2040, 'GQDU'] <- 1600
+# # manually adjust the value
+# bzone_du <- read.csv(file.path(infolder, "bzone_dwelling_units.csv"),
+#                      stringsAsFactors = FALSE)
+# bzone_du[bzone_du$Geo == 'Eug-41039003800' & bzone_du$Year == 2040, 'GQDU'] <- 1600
+# 
+# write.csv(bzone_du,
+#           file.path(infolder, "bzone_dwelling_units.csv"),
+#           row.names = FALSE)
 
-write.csv(bzone_du,
-          file.path("models/CLMPO-base/inputs", "bzone_dwelling_units.csv"),
-          row.names = FALSE)
-
-write.csv(bzone_du,
-          file.path("models/CLMPO-scenarios-cat/inputs", "bzone_dwelling_units.csv"),
-          row.names = FALSE)
+# write.csv(bzone_du,
+#           file.path("models/CLMPO-scenarios-cat/inputs", "bzone_dwelling_units.csv"),
+#           row.names = FALSE)
 
 ############################################### Visualize high-density bzones #######################################################
 model_dir <- 'models/CLMPO-base' # Change as appropriate

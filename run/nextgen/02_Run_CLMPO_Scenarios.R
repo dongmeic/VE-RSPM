@@ -4,7 +4,7 @@
 # Compare to T:\DCProjects\GitHub\VE-RSPM\run\firstrun\run_example_scenarios.R
 
 # steps:
-# 1. make a copy of T:\Models\VisionEval\VE-3.0-Installer-Windows-R4.1.3_2022-05-27\models\VERSPM-scenarios-cat\scenarios
+# 1. make a copy of C:\Users\clid1852\work\VE-3.0-Installer-Windows-R4.1.3_2022-05-27
 # 2. review the folders in the scenarios
 # 3. modify the scenarios based on the CLMPO data
 
@@ -25,14 +25,17 @@ scefolder = "models/CLMPO-scenarios-cat"
 # make the copy when errors occur
 wd <- getwd()
 print(wd)
+
 scenarios.cat <- installModel("VERSPM",var="scenarios-cat")
 scenarios.cat$run()
 #scenarios.cat <- openModel("VERSPM-scenarios-cat")
 dirfiles <- scenarios.cat$dir(scenarios=TRUE,all.files=TRUE)
 # check the existing category names
 catnm <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][1])))
-
 catnm_cl <- unique(infile$category_name)
+
+# rename the folder name VERSPM-scenarios-cat to CLMPO-scenarios-cat
+
 # clean the existing files in the scenarios folder
 clean.files <- function(){
   # delete files
@@ -42,8 +45,8 @@ clean.files <- function(){
   # delete files in folders
   unlink('models/CLMPO-scenarios-cat/scenarios', recursive = T)
 }
-# cleaned files and renamed the folder
-#clean.files()
+# cleaned files
+clean.files()
 
 # create a new list of folders
 # check existing input files
@@ -55,6 +58,12 @@ infiles_cl[!(infiles_cl %in% infiles)]
 
 # scefile refers the scenario table, scefolder refers to the path where scenarios'input files are saved
 create_dir <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-cat"){
+  main_folder_to_create <- file.path(scefolder, "scenarios")
+  if(file.exists(main_folder_to_create)){
+    cat(paste0(main_folder_to_create, ' already exists.\n'))
+  }else{
+    dir.create(main_folder_to_create)
+  }
   catnms <- unique(scefile$category_name)
   for(catnm in catnms){
     folder_to_create <- file.path(scefolder, "scenarios", catnm)
@@ -75,7 +84,13 @@ create_dir <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-cat
   }
 }
 
-#create_dir()
+create_dir()
+
+# delete the example input files and replace them with the CLMPO file
+input_folder <- 'models/CLMPO-scenarios-cat/inputs'
+unlink(input_folder, recursive = T)
+example_folder <- 'T:/Models/VisionEval/VE-3.0-Installer-Windows-R4.1.3_2022-05-27/models/CLMPO-scenarios-cat/inputs'
+file.copy(example_folder, 'models/CLMPO-scenarios-cat', recursive=TRUE)
 
 # add the modified input file
 copy_files <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-cat"){
@@ -98,18 +113,18 @@ copy_files()
 # modify the inputs
 modify_single_input <- function(scefile = infile,
                                 scefolder = "models/CLMPO-scenarios-cat",
-                                cat = 'I',
+                                catnm = 'I',
                                 csv = 'azone_per_cap_inc.csv',
                                 var = 'HHIncomePC.2010',
                                 cty = 'Eugene',
                                 lvl = 1,
                                 writeout = TRUE){
   cat(paste('Modifying', csv, '...\n'))
-  cat(paste0('The strategy is ', unique(scefile[scefile$category_name == cat,]$strategy_label),
-             ', the category is ', cat, ', the variable is ', var, ', and the level is ', lvl, '.\n'))
-  filepath <- file.path(scefolder, "scenarios", cat, lvl)
+  cat(paste0('The strategy is ', unique(scefile[scefile$category_name == catnm,]$strategy_label),
+             ', the category is ', catnm, ', the variable is ', var, ', and the level is ', lvl, '.\n'))
+  filepath <- file.path(scefolder, "scenarios", catnm, lvl)
   input.csv <- read.csv(file.path(filepath, csv),  stringsAsFactors = FALSE)
-  target.df <- subset(scefile, category_name == cat & file == csv &
+  target.df <- subset(scefile, category_name == catnm & file == csv &
                         variable == var & city == cty & policy_name == lvl)
 
   # the value to check and modify
@@ -129,16 +144,11 @@ modify_single_input <- function(scefile = infile,
     }
   }
 
-  if((v2 %in% v1) | (abs(v2-v1) < 0.00000001)){
+  if((v2 %in% v1)){
     cat('The values are the same or the modified value is in the original value list...\n')
+  }else if(class(v2)=="numeric" & all(abs(v2-v1) < 0.00000001)){
+    cat('The values are nearly the same...\n')
   }else{
-    # if(class(v1) != class(v2)){
-    #   cat('The values are different in data types...\n')
-    # }else{
-    #   cat(paste('The value difference is', v1-v2))
-    # }
-    #cat('The values are possibly different in data types or completely different...\n')
-
     if(var %in% names(input.csv)){
       if(cty != 'NA'){
         cat(paste0('The original value for the variable ', var, ' is ', v1, ' in ', cty, ";\n"))
@@ -168,7 +178,7 @@ modify_inputs <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-
     policynms <- unique(scefile[scefile$category_name == catnm,]$policy_name)
     for(policynm in policynms){
       filepath <- file.path(scefolder, "scenarios", catnm, policynm)
-      inputfiles <- scefile[scefile$category_name==catnm & scefile$policy_name == policynm,]$file
+      inputfiles <- unique(scefile[scefile$category_name==catnm & scefile$policy_name == policynm,]$file)
       for(inputfile in inputfiles){
         # file to change
         inputdata <- read.csv(file.path(filepath, inputfile))
@@ -189,14 +199,14 @@ modify_inputs <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-
           lvl <- policynm
           if('NA' %in% cities){
             if(lvl %in% lvls){
-              modify_single_input(cat = catnm,
+              modify_single_input(catnm = catnm,
                                   csv = inputfile,
                                   var = var,
                                   cty = 'NA',
                                   lvl = lvl)
             }else{
               # adjust the high-level setting with the common baseline with level 1
-              modify_single_input(cat = cat,
+              modify_single_input(catnm = catnm,
                                   csv = inputfile,
                                   var = var,
                                   cty = 'NA',
@@ -205,13 +215,13 @@ modify_inputs <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-
           }else{
             for(city in cities){
               if(lvl %in% lvls){
-                modify_single_input(cat = cat,
+                modify_single_input(catnm = catnm,
                                     csv = inputfile,
                                     var = var,
                                     cty = city,
                                     lvl = lvl)
               }else{
-                modify_single_input(cat = cat,
+                modify_single_input(catnm = catnm,
                                     csv = inputfile,
                                     var = var,
                                     cty = city,
