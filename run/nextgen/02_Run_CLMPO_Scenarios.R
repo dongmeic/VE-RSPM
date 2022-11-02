@@ -29,6 +29,7 @@ print(wd)
 scenarios.cat <- installModel("VERSPM",var="scenarios-cat")
 scenarios.cat$run()
 #scenarios.cat <- openModel("VERSPM-scenarios-cat")
+scenarios.cat <- openModel("CLMPO-scenarios-cat")
 dirfiles <- scenarios.cat$dir(scenarios=TRUE,all.files=TRUE)
 # check the existing category names
 catnm <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][1])))
