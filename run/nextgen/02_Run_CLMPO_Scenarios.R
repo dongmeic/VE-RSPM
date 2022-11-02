@@ -26,24 +26,25 @@ scefolder = "models/CLMPO-scenarios-cat"
 wd <- getwd()
 print(wd)
 
-# scenarios.cat <- installModel("VERSPM",var="scenarios-cat")
-# scenarios.cat$run()
-#scenarios.cat <- openModel("VERSPM-scenarios-cat")
-scenarios.cat <- openModel("CLMPO-scenarios-cat")
+#########################################  Install scenarios-cat model  #######################################
+scenarios.cat <- installModel("VERSPM",var="scenarios-cat")
+scenarios.cat$run()
+scenarios.cat <- openModel("VERSPM-scenarios-cat")
+#scenarios.cat <- openModel("CLMPO-scenarios-cat")
 print(scenarios.cat) 
 dirfiles <- scenarios.cat$dir(scenarios=TRUE,all.files=TRUE)
 
-
 # scenarios.ms <- installModel("VERSPM",var="scenarios-ms")
 # scenarios.ms$run()
-
 
 # check the existing category names
 catnm <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][1])))
 catnm_cl <- unique(infile$category_name)
 
+#########################################  Manual step  #######################################
 # rename the folder name VERSPM-scenarios-cat to CLMPO-scenarios-cat
 
+######################################### Set up CLMPO scenarios-cat folder #######################################
 # clean the existing files in the scenarios folder
 clean.files <- function(){
   # delete files
@@ -94,7 +95,7 @@ create_dir <- function(scefile = infile, scefolder = "models/CLMPO-scenarios-cat
 
 create_dir()
 
-# delete the example input files and replace them with the CLMPO file
+# delete the example input files and replace them with the CLMPO files
 input_folder <- 'models/CLMPO-scenarios-cat/inputs'
 unlink(input_folder, recursive = T)
 example_folder <- 'T:/Models/VisionEval/VE-3.0-Installer-Windows-R4.1.3_2022-05-27/models/CLMPO-scenarios-cat/inputs'
@@ -322,10 +323,12 @@ configFile <- file.path(scefolder, "scenarios", "visioneval.cnf")
 cat(configFile,"\n")
 yaml::write_yaml(clmpo_scen_config,configFile)
 
+######################################### Run CLMPO scenarios-cat folder #######################################
+
 # try out running the scenarios
 scenarios.cat.cl <- openModel("CLMPO-scenarios-cat")
 scenarios.cat.cl$run()
 
-# try out running the base model
+# try out running the base model (for debugging; need to set up the model folder first)
 base.cl <- openModel("CLMPO-base")
 base.cl$run()
