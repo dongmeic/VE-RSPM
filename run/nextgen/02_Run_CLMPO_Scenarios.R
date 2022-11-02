@@ -1,4 +1,4 @@
-# Objective: Run VE 3.0 with the CLMPO scenarios inputs
+# Objective: Run VE 3.0 with the CLMPO scenarios inputs with the scenarios-cat setup
 # By: Dongmei Chen (dchen@lcog.org)
 # October 14th, 2022
 # Compare to T:\DCProjects\GitHub\VE-RSPM\run\firstrun\run_example_scenarios.R
@@ -26,11 +26,18 @@ scefolder = "models/CLMPO-scenarios-cat"
 wd <- getwd()
 print(wd)
 
-scenarios.cat <- installModel("VERSPM",var="scenarios-cat")
-scenarios.cat$run()
+# scenarios.cat <- installModel("VERSPM",var="scenarios-cat")
+# scenarios.cat$run()
 #scenarios.cat <- openModel("VERSPM-scenarios-cat")
 scenarios.cat <- openModel("CLMPO-scenarios-cat")
+print(scenarios.cat) 
 dirfiles <- scenarios.cat$dir(scenarios=TRUE,all.files=TRUE)
+
+
+# scenarios.ms <- installModel("VERSPM",var="scenarios-ms")
+# scenarios.ms$run()
+
+
 # check the existing category names
 catnm <- unique(unlist(lapply(dirfiles[2:25], function(x) str_split(x, "/")[[1]][1])))
 catnm_cl <- unique(infile$category_name)
@@ -280,7 +287,14 @@ clmpo_scen_config_str <- function(scefile = infile){
       j <- i & scefile$strategy_level==level
       Inputs <- structure(names=NULL,lapply(unique(CatNames), function(Name){
         # possibly with multiple variables for different levels
-        Level <- max(scefile$policy_name[j & scefile$category_name==Name])
+        # allLevels <- unique(scefile$policy_name[j & scefile$category_name==Name])
+        # if(length(allLevels) > 0){
+        #   Level <- paste(sort(allLevels), 
+        #                  collapse =", ")
+        # }else{
+        #   Level <- as.integer(allLevels)
+        # }
+        Level <- min(scefile$policy_name[j & scefile$category_name==Name])
         return((list(Name=Name,
                      Level=as.integer(Level))))
       }))
