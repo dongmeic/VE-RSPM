@@ -1,0 +1,64 @@
+2022-11-03 00:18:52 : Initializing Model. This may take some time...
+Name: Staged Model for CLMPO Selected Scenarios
+Scenario: CLMPO Scenario Future Year
+Description: Model future year for the CLMPO selected scenarios set up by stage
+Timestamp: 2022-11-03 00:18:52
+2022-11-03 00:18:56 : Model successfully initialized.
+2022-11-03 00:18:56 : Start  module 'VESimHouseholds::CreateHouseholds' for year '2040'. 2385.09Mb
+2022-11-03 00:18:59 : Finish module 'VESimHouseholds::CreateHouseholds' for year '2040'. 2588.84Mb
+2022-11-03 00:19:00 : Start  module 'VESimHouseholds::PredictWorkers' for year '2040'. 2440.91Mb
+2022-11-03 00:19:02 : Finish module 'VESimHouseholds::PredictWorkers' for year '2040'. 2663.33Mb
+2022-11-03 00:19:03 : Start  module 'VESimHouseholds::AssignLifeCycle' for year '2040'. 2371.62Mb
+2022-11-03 00:19:04 : Finish module 'VESimHouseholds::AssignLifeCycle' for year '2040'. 2543.4Mb
+2022-11-03 00:19:05 : Start  module 'VESimHouseholds::PredictIncome' for year '2040'. 2398.3Mb
+2022-11-03 00:19:09 : Finish module 'VESimHouseholds::PredictIncome' for year '2040'. 2549.33Mb
+2022-11-03 00:19:10 : Start  module 'VELandUse::PredictHousing' for year '2040'. 2369.46Mb
+2022-11-03 00:19:13 : Finish module 'VELandUse::PredictHousing' for year '2040'. 2506.67Mb
+2022-11-03 00:19:14 : Start  module 'VELandUse::LocateEmployment' for year '2040'. 2399.67Mb
+2022-11-03 00:19:15 : Finish module 'VELandUse::LocateEmployment' for year '2040'. 2665.91Mb
+2022-11-03 00:19:16 : Start  module 'VELandUse::AssignLocTypes' for year '2040'. 2371Mb
+2022-11-03 00:19:18 : Finish module 'VELandUse::AssignLocTypes' for year '2040'. 2792.4Mb
+2022-11-03 00:19:19 : Start  module 'VELandUse::Calculate4DMeasures' for year '2040'. 2368.38Mb
+2022-11-03 00:19:19 : Finish module 'VELandUse::Calculate4DMeasures' for year '2040'. 2370.39Mb
+2022-11-03 00:19:20 : Start  module 'VELandUse::CalculateUrbanMixMeasure' for year '2040'. 2359.75Mb
+2022-11-03 00:19:20 : Finish module 'VELandUse::CalculateUrbanMixMeasure' for year '2040'. 2458.32Mb
+2022-11-03 00:19:21 : Start  module 'VELandUse::AssignParkingRestrictions' for year '2040'. 2363.52Mb
+2022-11-03 00:19:21 : Finish module 'VELandUse::AssignParkingRestrictions' for year '2040'. 2437.45Mb
+2022-11-03 00:19:22 : Start  module 'VELandUse::AssignDemandManagement' for year '2040'. 2368.61Mb
+2022-11-03 00:19:23 : Finish module 'VELandUse::AssignDemandManagement' for year '2040'. 2456.21Mb
+2022-11-03 00:19:24 : Start  module 'VELandUse::AssignCarSvcAvailability' for year '2040'. 2370.09Mb
+2022-11-03 00:19:24 : Finish module 'VELandUse::AssignCarSvcAvailability' for year '2040'. 2395.86Mb
+2022-11-03 00:19:25 : Start  module 'VETransportSupply::AssignTransitService' for year '2040'. 2362.45Mb
+2022-11-03 00:19:25 : Finish module 'VETransportSupply::AssignTransitService' for year '2040'. 2363.16Mb
+2022-11-03 00:19:26 : Start  module 'VETransportSupply::AssignRoadMiles' for year '2040'. 2359.74Mb
+2022-11-03 00:19:26 : Finish module 'VETransportSupply::AssignRoadMiles' for year '2040'. 2359.99Mb
+2022-11-03 00:19:27 : Start  module 'VEHouseholdVehicles::AssignDrivers' for year '2040'. 2359.74Mb
+2022-11-03 00:19:29 : Finish module 'VEHouseholdVehicles::AssignDrivers' for year '2040'. 2662.89Mb
+2022-11-03 00:19:30 : Start  module 'VEHouseholdVehicles::AssignVehicleOwnership' for year '2040'. 2386.2Mb
+2022-11-03 00:19:32 : Finish module 'VEHouseholdVehicles::AssignVehicleOwnership' for year '2040'. 3250.64Mb
+2022-11-03 00:19:33 : Start  module 'VEHouseholdVehicles::AssignVehicleType' for year '2040'. 2397.71Mb
+2022-11-03 00:19:39 : Finish module 'VEHouseholdVehicles::AssignVehicleType' for year '2040'. 2957.87Mb
+2022-11-03 00:19:40 : Start  module 'VEHouseholdVehicles::CreateVehicleTable' for year '2040'. 2375.52Mb
+2022-11-03 00:19:41 : Finish module 'VEHouseholdVehicles::CreateVehicleTable' for year '2040'. 2441.89Mb
+2022-11-03 00:19:42 : Start  module 'VEHouseholdVehicles::AssignVehicleAge' for year '2040'. 2385.11Mb
+2022-11-03 00:19:43 : Finish module 'VEHouseholdVehicles::AssignVehicleAge' for year '2040'. 2744.78Mb
+2022-11-03 00:19:44 : Start  module 'VEHouseholdVehicles::CalculateVehicleOwnCost' for year '2040'. 2382.25Mb
+2022-11-03 00:19:46 : Finish module 'VEHouseholdVehicles::CalculateVehicleOwnCost' for year '2040'. 3106.16Mb
+2022-11-03 00:19:47 : Start  module 'VEHouseholdVehicles::AdjustVehicleOwnership' for year '2040'. 2416.72Mb
+2022-11-03 00:19:49 : Finish module 'VEHouseholdVehicles::AdjustVehicleOwnership' for year '2040'. 2839.18Mb
+2022-11-03 00:19:50 : Start  module 'VEHouseholdTravel::CalculateHouseholdDvmt' for year '2040'. 2414.85Mb
+2022-11-03 00:19:50 : Finish module 'VEHouseholdTravel::CalculateHouseholdDvmt' for year '2040'. 2645.69Mb
+2022-11-03 00:19:51 : Start  module 'VEHouseholdTravel::CalculateAltModeTrips' for year '2040'. 2372.18Mb
+2022-11-03 00:19:52 : Finish module 'VEHouseholdTravel::CalculateAltModeTrips' for year '2040'. 2688.62Mb
+2022-11-03 00:19:53 : Start  module 'VEHouseholdTravel::CalculateVehicleTrips' for year '2040'. 2377.75Mb
+2022-11-03 00:19:53 : Finish module 'VEHouseholdTravel::CalculateVehicleTrips' for year '2040'. 2551.93Mb
+2022-11-03 00:19:54 : Start  module 'VEHouseholdTravel::DivertSovTravel' for year '2040'. 2371.11Mb
+2022-11-03 00:19:55 : Finish module 'VEHouseholdTravel::DivertSovTravel' for year '2040'. 2690.67Mb
+2022-11-03 00:19:56 : Start  module 'VEPowertrainsAndFuels::CalculateCarbonIntensity' for year '2040'. 2380.82Mb
+2022-11-03 00:19:57 : Finish module 'VEPowertrainsAndFuels::CalculateCarbonIntensity' for year '2040'. 2382.79Mb
+2022-11-03 00:19:57 : Start  module 'VEPowertrainsAndFuels::AssignHhVehiclePowertrain' for year '2040'. 2359.77Mb
+2022-11-03 00:19:59 : Finish module 'VEPowertrainsAndFuels::AssignHhVehiclePowertrain' for year '2040'. 2991.29Mb
+2022-11-03 00:20:00 : Start  module 'VETravelPerformance::CalculateRoadDvmt' for year '2040'. 2426.22Mb
+2022-11-03 00:20:00 [Error]: Error in names(HhUrbanRoadDvmt_Ma) <- Ma : 
+  'names' attribute [1] must be the same length as the vector [0]
+

@@ -4,9 +4,11 @@
 # Compare to T:\DCProjects\GitHub\VE-RSPM\run\firstrun\run_example_scenarios.R
 
 # steps:
-# 1. make a copy of C:\Users\clid1852\work\VE-3.0-Installer-Windows-R4.1.3_2022-05-27
-# 2. review the folders in the scenarios
-# 3. modify the scenarios based on the CLMPO data
+# 1. make a copy of C:\Users\clid1852\work\VE-3.0-Installer-Windows-R4.1.3_2022-05-27;
+# 2. install and run scenarios-cat; 
+# 3. review the folders in scenarios-cat;
+# 4. modify the inputs based on the CLMPO data, totally 6400 scenarios in this setup;
+# 5. run the CLMPO model, this step is not completed due to a fatal error (multiple tries failed)
 
 library(visioneval)
 require(VEModel)
