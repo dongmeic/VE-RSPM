@@ -18,7 +18,5 @@ When running scenarios by category, RStudio experienced a fatal error multiple t
 
 When calculating daily vehicle miles traveled in the VETravelPerformance module, an error as below occurred in the staged model.
 
-Error in names(HhUrbanRoadDvmt_Ma) <- Ma :
-  'names' attribute [1] must be the same length as the vector [0]
-
-  
+`Error in names(HhUrbanRoadDvmt_Ma) <- Ma :
+  'names' attribute [1] must be the same length as the vector [0]`
